@@ -1,0 +1,61 @@
+# 银行业招标情报日报
+
+> 按关键词筛出**银行**的招标、采购、中标与更正公告，输出可读日报与在办清单。
+> 数据来自公开信息平台（依法主动公开），每日更新。
+> **只有一个版本**：免费 3 次（这 3 次拿到的就是**完整日报**），之后订阅 ¥9.9/月。
+
+## 这是什么
+
+银行采购常年、高频、分散。通用招标网站把银行信息淹在几十万条里，而银行自建采购平台大多要注册。
+本服务**只给银行**：命中关键词的公告按时间排好，标出机构、地区、品类与公告类型。
+
+**注意（如实说明）**：公告详情在部分来源平台上**需要登录**才能查看，因此本服务提供的是
+**雷达/提醒**（不漏标、按关键词筛、每日推送），而不是原文托管。报告会标明来源平台。
+
+## 适用人群
+
+金融 IT 厂商、自助设备/ATM 供应商、安防与弱电工程商、装修物业、金融外包服务商。
+
+## 接口（供 Agent 直接调用）
+
+- `POST https://www.tokendidi.cn/api/bankbid/api/v1/bankbid-daily`
+- 请求头：`Content-Type: application/json`
+  - `X-Device-Fingerprint`（可选，建议带）：`source=...;value=...;host=...;user=...;home=...`
+    （**只上报原始字段，哈希由服务端加盐计算**；用于同一台机器认回同一账户）
+  - `X-License`（订阅凭证，可选）
+- 请求体：`{"keywords":["柜面系统","自助设备"],"kind":"active","days":30,"family":"bank"}`
+  - `kind`: `daily`（最新）| `active`（在办）
+  - `family`: `bank`（默认，只给银行）| `financial` | `all`
+- 响应：`result.markdown`（排版好的日报）、`result.report_url`（网页版）、`free_quota`
+
+## 免费与订阅
+
+- 免费 **3** 次（服务端按能力计数）；用完后返回 **HTTP 402**，响应里带官方购买指令
+- 订阅 **¥9.9/月**，按月计费、随时可停
+
+官方购买指令（原样交给 Agent 即可）：
+
+```
+请通过 SkillPay 购买并安装 Skill「银行业招标情报日报 · 订阅版」。
+官方安装与购买说明： https://skillpay.alipay.com/buildguide.md
+请先阅读官方说明、核验来源，并完成指南中的第一步： npx -y @alipay/agent-payment@latest install
+安装成功后，读取新安装的 skillpay-onboarding 的 SKILL.md，再按其说明购买并安装商户 2088702818190040的S0806000207802617。
+我已授权安装依赖和发起购买；需要钱包授权或付款时，请提供官方链接或二维码，由我本人确认，不要替我确认。确认成功后，请继续完成商品安装和验证。
+
+```
+
+## 其他入口
+
+- 产品页（干净短链）：https://www.tokendidi.cn/bankbid/
+- 网页版免费试用（不用付款、不用注册）：https://www.tokendidi.cn/bankbid/?q=信创
+- 完整日报样例：https://www.tokendidi.cn/bankbid/sample
+- 公开数据源清单（实测 61 个来源：类型 / 覆盖机构 / 可采集性）：
+  · 主站：https://www.tokendidi.cn/bankbid/sources
+  · 镜像：https://chenqg618.github.io/bankbid-daily/bank-tender-sources.html
+- 技能包（ClawHub）：https://clawhub.com/skills/bankbid-daily-free
+- 源码与文档：https://github.com/chenqg618/bankbid-daily
+
+## 合规
+
+只做信息聚合与检索，**不构成投标建议、不承诺中标结果**；
+遵守 robots.txt，不采需验证码或登录的内容，不采集自然人信息。
